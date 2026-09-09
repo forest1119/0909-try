@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>个人主页 | Portfolio</title>
+  
+  <!-- Tailwind CSS CDN (用于快速现代排版) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    body::-webkit-scrollbar { display: none; }
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      background-color: #ffffff;
+      color: #1e293b;
+      font-family: 'Comic Sans MS', 'Segoe UI', system-ui, sans-serif;
+    }
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: auto;
+      touch-action: none;
+    }
+    .content-layer {
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .interactive { pointer-events: auto; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 2px solid #0f172a;
+      box-shadow: 4px 4px 0 #0f172a;
+    }
+    .btn-ink {
+      border: 2px solid #0f172a;
+      box-shadow: 3px 3px 0 #0f172a;
+      transition: all 0.15s ease;
+    }
+    .btn-ink:hover {
+      transform: translate(1px, 1px);
+      box-shadow: 2px 2px 0 #0f172a;
+    }
+    .chip-ink {
+      border: 2px solid #0f172a;
+      box-shadow: 2px 2px 0 #0f172a;
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+  <div id="canvas-container"></div>
+  <div class="content-layer min-h-screen flex flex-col justify-between p-6 md:p-12">
+    
+    <!-- 顶部导航栏 -->
+    <header class="flex justify-between items-center w-full max-w-6xl mx-auto interactive">
+      <div class="text-2xl font-black tracking-wide text-slate-900" style="font-family:'Comic Sans MS','Segoe UI',sans-serif;">Forest</div>
+      <nav class="hidden md:flex space-x-6 text-sm font-bold text-slate-600">
+        <a href="#about" class="hover:text-slate-900 transition">关于我</a>
+        <a href="#skills" class="hover:text-slate-900 transition">技能</a>
+        <a href="#works" class="hover:text-slate-900 transition">作品集</a>
+        <a href="#contact" class="hover:text-slate-900 transition">联系我</a>
+      </nav>
+      <a href="#contact" class="interactive px-4 py-2 text-sm font-bold rounded-full bg-white text-slate-900 btn-ink">
+        Get In Touch
+      </a>
+    </header>
+
+    <!-- 中央 Hero 区域 -->
+    <main class="flex-1 flex flex-col justify-center items-center text-center my-12">
+      <div class="interactive inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-yellow-300 text-slate-900 chip-ink mb-4">
+        <span class="w-2 h-2 rounded-full bg-slate-900 animate-ping"></span>
+        移动鼠标看看我的眼睛 👀
+      </div>
+      
+      <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4 text-slate-900" style="font-family:'Comic Sans MS','Segoe UI',sans-serif;">
+        你好，我是 Forest
+      </h1>
+      <p class="text-lg md:text-xl text-slate-600 font-semibold max-w-xl mb-8 leading-relaxed">
+        数字艺术创作者 & 产品设计 / 前端开发者。
+专注于 3D 建模、动画设计与交互体验。
+      </p>
+      <div class="flex gap-4 interactive">
+        <a href="#works" class="px-6 py-3 rounded-xl bg-white text-slate-900 font-bold btn-ink">
+          浏览作品
+        </a>
+        <a href="#about" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold btn-ink" style="box-shadow:3px 3px 0 #fbbf24;">
+          了解更多
+        </a>
+      </div>
+    </main>
+
+    <!-- 底部信息卡片区域 -->
+    <footer class="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 interactive">
+      <div class="glass-card p-6 rounded-2xl">
+        <h3 class="text-slate-900 font-black mb-2">🎨 3D & 动画</h3>
+        <p class="text-sm text-slate-600 font-medium">精通 Blender 角色建模、烘焙贴图与骨骼动画绑定。</p>
+      </div>
+      <div class="glass-card p-6 rounded-2xl">
+        <h3 class="text-slate-900 font-black mb-2">💻 产品与交互</h3>
+        <p class="text-sm text-slate-600 font-medium">关注数据分析、产品运营与数字化交互应用体验。</p>
+      </div>
+      <div class="glass-card p-6 rounded-2xl">
+        <h3 class="text-slate-900 font-black mb-2">🌐 极速联络</h3>
+        <a href="mailto:ngasumhung@gmail.com" class="text-sm text-slate-600 font-semibold hover:text-slate-900 transition underline decoration-2 decoration-yellow-400">Email：ngasumhung@gmail.com</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Three.js 史努比画风卡通头像 + 瞳孔追踪 -->
+  <script>
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0.3, 7.0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(renderer.domElement);
+
+    // 灯光 (卡通风格 - 柔和均匀)
+    scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    keyLight.position.set(5, 6, 5);
+    scene.add(keyLight);
+    const rimLight = new THREE.DirectionalLight(0xfde68a, 0.4);
+    rimLight.position.set(-4, 3, -4);
+    scene.add(rimLight);
+    const fillLight = new THREE.DirectionalLight(0xfecaca, 0.25);
+    fillLight.position.set(0, -3, 3);
+    scene.add(fillLight);
+
+    // 轨道控制器
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enableZoom = false;
+    controls.maxPolarAngle = Math.PI / 2 + 0.15;
+    controls.minPolarAngle = Math.PI / 3;
+    controls.target.set(0, 0.4, 0);
+
+    // 头像组
+    const avatarGroup = new THREE.Group();
+    scene.add(avatarGroup);
+    avatarGroup.position.y = 0.0;
+    avatarGroup.scale.set(1.25, 1.25, 1.25);
+
+    // ========== 卡通材质工具：扁平阴影 + 黑色描边 ==========
+    function cartoonMat(color, opts = {}) {
+      return new THREE.MeshStandardMaterial({
+        color: color,
+        roughness: opts.roughness ?? 0.75,
+        metalness: opts.metalness ?? 0.0,
+        flatShading: opts.flat ?? false,
+      });
+    }
+    // 黑色描边 (轮廓线)
+    function addOutline(mesh, color = 0x0a0a0a, scale = 1.025) {
+      const outlineMat = new THREE.MeshBasicMaterial({ color, side: THREE.BackSide });
+      const outline = new THREE.Mesh(mesh.geometry, outlineMat);
+      outline.scale.multiplyScalar(scale);
+      outline.renderOrder = -1;
+      mesh.parent.add(outline);
+      return outline;
+    }
+
+    const BLACK = 0x0f172a;
+    const SKIN = 0xffe4c4;
+    const HAIR = 0x0a0a0a;
+    const WHITE = 0xffffff;
+    const SHIRT_DARK = 0x1e293b;
+    const SHIRT_LIGHT = 0xe5dcc3;
+    const CHEEK = 0xfca5a5;
+
+    // ========== 1. 头部 (卡通圆大头) ==========
+    const headGeo = new THREE.SphereGeometry(1.0, 48, 48);
+    headGeo.scale(1.0, 1.1, 0.98);
+    const head = new THREE.Mesh(headGeo, cartoonMat(SKIN));
+    head.position.y = 0.95;
+    avatarGroup.add(head);
+    addOutline(head, BLACK, 1.015);
+
+    // ========== 2. 眼睛 (史努比式大圆眼，白多黑少) ==========
+    const eyeGroup = new THREE.Group();
+    avatarGroup.add(eyeGroup);
+
+    // 眼白 (大椭圆)
+    const scleraGeo = new THREE.SphereGeometry(0.23, 32, 32);
+    scleraGeo.scale(0.95, 1.1, 0.5);
+    const scleraMat = cartoonMat(WHITE, { roughness: 0.3 });
+
+    // 虹膜 + 瞳孔 (一个整体：棕色环 + 黑色圆心)
+    const irisGeo = new THREE.SphereGeometry(0.125, 32, 32);
+    irisGeo.scale(1, 1, 0.32);
+    const irisMat = cartoonMat(0x5c3a21, { roughness: 0.45 });
+
+    const pupilGeo = new THREE.CircleGeometry(0.065, 32);
+    const pupilMat = new THREE.MeshBasicMaterial({ color: BLACK });
+
+    const highlightGeo1 = new THREE.CircleGeometry(0.025, 16);
+    const highlightMat = new THREE.MeshBasicMaterial({ color: WHITE });
+    const highlightGeo2 = new THREE.CircleGeometry(0.012, 16);
+
+    const eyeLeft = new THREE.Group();
+    const eyeRight = new THREE.Group();
+    eyeGroup.add(eyeLeft, eyeRight);
+    eyeLeft.position.set(-0.35, 1.0, 0.83);
+    eyeRight.position.set(0.35, 1.0, 0.83);
+
+    const irisLeft = new THREE.Group();
+    const irisRight = new THREE.Group();
+
+    function buildEye(eyeContainer, irisContainer) {
+      const sclera = new THREE.Mesh(scleraGeo, scleraMat);
+      eyeContainer.add(sclera);
+      addOutline(sclera, BLACK, 1.012);
+
+      const iris = new THREE.Mesh(irisGeo, irisMat);
+      iris.position.z = 0.11;
+      irisContainer.add(iris);
+
+      const pupil = new THREE.Mesh(pupilGeo, pupilMat);
+      pupil.position.z = 0.022;
+      iris.add(pupil);
+
+      const hl1 = new THREE.Mesh(highlightGeo1, highlightMat);
+      hl1.position.set(-0.035, 0.04, 0.028);
+      iris.add(hl1);
+      const hl2 = new THREE.Mesh(highlightGeo2, highlightMat);
+      hl2.position.set(0.03, -0.02, 0.028);
+      iris.add(hl2);
+
+      eyeContainer.add(irisContainer);
+    }
+    buildEye(eyeLeft, irisLeft);
+    buildEye(eyeRight, irisRight);
+
+    // ========== 3. 鼻子 (小圆黑鼻，史努比风格) ==========
+    const noseGeo = new THREE.SphereGeometry(0.09, 24, 24);
+    noseGeo.scale(1.1, 0.9, 1);
+    const nose = new THREE.Mesh(noseGeo, cartoonMat(BLACK, { roughness: 0.3 }));
+    nose.position.set(0, 0.76, 1.02);
+    avatarGroup.add(nose);
+    addOutline(nose, BLACK, 1.04);
+    // 鼻尖高光
+    const noseHL = new THREE.Mesh(new THREE.CircleGeometry(0.02, 12), new THREE.MeshBasicMaterial({ color: WHITE, transparent: true, opacity: 0.85 }));
+    noseHL.position.set(-0.025, 0.02, 0.075);
+    nose.add(noseHL);
+
+    // 鼻梁细黑线 (连接眼镜)
+    const lineGeo = new THREE.BoxGeometry(0.008, 0.2, 0.008);
+    const noseLine = new THREE.Mesh(lineGeo, new THREE.MeshBasicMaterial({ color: BLACK }));
+    noseLine.position.set(0, 0.86, 0.995);
+    avatarGroup.add(noseLine);
+
+    // ========== 4. 嘴巴 (小微笑) ==========
+    const smileGroup = new THREE.Group();
+    avatarGroup.add(smileGroup);
+
+    const smileGeo = new THREE.TorusGeometry(0.13, 0.022, 10, 24, Math.PI * 0.7);
+    const smile = new THREE.Mesh(smileGeo, cartoonMat(BLACK));
+    smile.rotation.x = Math.PI;
+    smile.position.set(0, 0.5, 0.96);
+    smileGroup.add(smile);
+
+    // 腮红 (小圆粉)
+    const cheekMat = cartoonMat(CHEEK, { roughness: 0.6 });
+    const cheekGeo = new THREE.CircleGeometry(0.09, 24);
+    const cheekL = new THREE.Mesh(cheekGeo, cheekMat);
+    cheekL.position.set(-0.55, 0.62, 0.9);
+    cheekL.rotation.y = -0.3;
+    avatarGroup.add(cheekL);
+    const cheekR = cheekL.clone();
+    cheekR.position.x = 0.55;
+    cheekR.rotation.y = 0.3;
+    avatarGroup.add(cheekR);
+
+    // ========== 5. 头发 (中分发型，无刘海) ==========
+    const hairMat = cartoonMat(HAIR, { roughness: 0.9 });
+
+    // 左半头顶 (中分左侧)
+    const hairTopLGeo = new THREE.SphereGeometry(1.07, 32, 32, Math.PI * 0.5, Math.PI, 0, Math.PI * 0.58);
+    const hairTopL = new THREE.Mesh(hairTopLGeo, hairMat);
+    hairTopL.position.set(0, 1.02, 0);
+    hairTopL.rotation.y = Math.PI * 0.02;
+    avatarGroup.add(hairTopL);
+    addOutline(hairTopL, BLACK, 1.01);
+
+    // 右半头顶 (中分右侧)
+    const hairTopRGeo = new THREE.SphereGeometry(1.07, 32, 32, 0, Math.PI, 0, Math.PI * 0.58);
+    const hairTopR = new THREE.Mesh(hairTopRGeo, hairMat);
+    hairTopR.position.set(0, 1.02, 0);
+    hairTopR.rotation.y = -Math.PI * 0.02;
+    avatarGroup.add(hairTopR);
+    addOutline(hairTopR, BLACK, 1.01);
+
+    // 头顶中分细缝 (露出肤色，强化中分发线)
+    const partGeo = new THREE.BoxGeometry(0.025, 0.01, 0.35);
+    const part = new THREE.Mesh(partGeo, cartoonMat(SKIN));
+    part.position.set(0, 1.28, 0.72);
+    avatarGroup.add(part);
+
+    // 中分前发丝 (左半边盖向右侧前额，右半边盖向左侧前额，无刘海露出额头)
+    function sideParting(side) {
+      const g = new THREE.SphereGeometry(0.52, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.42);
+      const m = new THREE.Mesh(g, hairMat);
+      m.position.set(side * 0.08, 1.16, 0.76);
+      m.rotation.set(Math.PI * 0.52, side * 0.15, side * 0.12);
+      m.scale.set(0.95, 0.48, 0.55);
+      avatarGroup.add(m);
+      addOutline(m, BLACK, 1.008);
+    }
+    sideParting(-1);  // 左发丝往右偏
+    sideParting(1);   // 右发丝往左偏
+
+    // 两侧长发片 (用椭球代替Capsule，兼容r128)
+    function sideHair(side) {
+      const g = new THREE.SphereGeometry(0.3, 24, 24);
+      const h = new THREE.Mesh(g, hairMat);
+      h.position.set(side * 0.98, 0.42, -0.05);
+      h.rotation.z = side * 0.24;
+      h.rotation.x = 0.08;
+      h.scale.set(0.78, 2.05, 0.58);
+      avatarGroup.add(h);
+      addOutline(h, BLACK, 1.012);
+    }
+    sideHair(-1);
+    sideHair(1);
+
+    // 后发
+    const backHairGeo = new THREE.SphereGeometry(1.05, 32, 32);
+    const backHair = new THREE.Mesh(backHairGeo, hairMat);
+    backHair.position.set(0, 0.9, -0.42);
+    backHair.scale.set(1.05, 1.4, 0.75);
+    avatarGroup.add(backHair);
+    addOutline(backHair, BLACK, 1.01);
+
+    // ========== 6. 眼镜 (大框黑色卡通眼镜 - 带铆钉) ==========
+    const glassesGroup = new THREE.Group();
+    avatarGroup.add(glassesGroup);
+
+    const frameMat = cartoonMat(BLACK, { roughness: 0.35, metalness: 0.15 });
+    const lensMat = new THREE.MeshPhysicalMaterial({
+      color: WHITE, transparent: true, opacity: 0.08,
+      roughness: 0.05, metalness: 0.0, transmission: 0.92, thickness: 0.02,
+    });
+
+    function cartoonLens(side) {
+      const g = new THREE.Group();
+      g.position.set(side * 0.35, 1.0, 0.98);
+
+      // 镜框 (圆环，更粗)
+      const frameGeo = new THREE.TorusGeometry(0.24, 0.042, 12, 48);
+      const frame = new THREE.Mesh(frameGeo, frameMat);
+      frame.scale.set(1.05, 0.92, 1);
+      g.add(frame);
+      addOutline(frame, BLACK, 1.008);
+
+      // 镜片
+      const lensGeo = new THREE.CircleGeometry(0.215, 48);
+      const lens = new THREE.Mesh(lensGeo, lensMat);
+      lens.scale.set(1.05, 0.92, 1);
+      g.add(lens);
+
+      // 金色铆钉装饰
+      const rivetGeo = new THREE.SphereGeometry(0.016, 10, 10);
+      const rivetMat = cartoonMat(0xd69e2e, { metalness: 0.85, roughness: 0.2 });
+      [[-0.215, 0.085], [0.215, 0.085]].forEach(([rx, ry]) => {
+        const r = new THREE.Mesh(rivetGeo, rivetMat);
+        r.position.set(rx, ry, 0.03);
+        g.add(r);
+      });
+
+      glassesGroup.add(g);
+    }
+    cartoonLens(-1);
+    cartoonLens(1);
+
+    // 中梁 (更粗的黑条)
+    const bridgeGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.28, 12);
+    const bridge = new THREE.Mesh(bridgeGeo, frameMat);
+    bridge.rotation.z = Math.PI / 2;
+    bridge.position.set(0, 0.98, 1.0);
+    glassesGroup.add(bridge);
+
+    // 镜腿
+    function cartoonArm(side) {
+      const armGeo = new THREE.BoxGeometry(0.62, 0.035, 0.05);
+      const arm = new THREE.Mesh(armGeo, frameMat);
+      arm.position.set(side * 0.65, 1.03, 0.76);
+      arm.rotation.y = side * 0.26;
+      glassesGroup.add(arm);
+      const earGeo = new THREE.BoxGeometry(0.22, 0.04, 0.055);
+      const ear = new THREE.Mesh(earGeo, frameMat);
+      ear.position.set(side * 0.96, 0.95, 0.33);
+      ear.rotation.y = side * 0.42;
+      ear.rotation.z = side * 0.12;
+      glassesGroup.add(ear);
+    }
+    cartoonArm(-1); cartoonArm(1);
+
+    // ========== 7. 脖子 + 身体 (格纹衬衫) ==========
+    // 脖子
+    const neckGeo = new THREE.CylinderGeometry(0.32, 0.36, 0.3, 24);
+    const neck = new THREE.Mesh(neckGeo, cartoonMat(SKIN));
+    neck.position.set(0, 0.16, 0);
+    avatarGroup.add(neck);
+    addOutline(neck, BLACK, 1.01);
+
+    // 格纹程序化贴图 (经典格子衬衫，黑白+米黄)
+    function plaidTexture() {
+      const s = 512;
+      const c = document.createElement('canvas');
+      c.width = c.height = s;
+      const ctx = c.getContext('2d');
+      // 底色 - 深海军蓝
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, s, s);
+      // 最外层米色大方格
+      ctx.fillStyle = '#e8dcc0';
+      for (let i = 0; i < 4; i++) {
+        const p = (i / 4) * s;
+        ctx.fillRect(p, 0, 16, s);
+        ctx.fillRect(0, p, s, 16);
+      }
+      // 内层白色细大方格
+      ctx.fillStyle = '#ffffff';
+      for (let i = 0; i < 4; i++) {
+        const p = (i / 4) * s + 7;
+        ctx.fillRect(p, 0, 4, s);
+        ctx.fillRect(0, p, s, 4);
+      }
+      // 更深的细小方格
+      ctx.fillStyle = '#1e293b';
+      for (let i = 0; i < 8; i++) {
+        const p = (i / 8) * s;
+        ctx.fillRect(p, 0, 3, s);
+        ctx.fillRect(0, p, s, 3);
+      }
+      // 斜纹交叉装饰 (经典法兰绒格)
+      ctx.save();
+      ctx.globalAlpha = 0.35;
+      ctx.strokeStyle = '#e8dcc0';
+      ctx.lineWidth = 3;
+      for (let i = -s; i < s * 2; i += 64) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + s, s);
+        ctx.stroke();
+      }
+      ctx.restore();
+      const t = new THREE.CanvasTexture(c);
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.repeat.set(2.5, 2.0);
+      return t;
+    }
+    const shirtMat = cartoonMat(WHITE, { roughness: 0.85 });
+    shirtMat.map = plaidTexture();
+
+    // 身体 (卡通梯形上半身)
+    const bodyGeo = new THREE.CylinderGeometry(0.72, 1.0, 1.45, 24, 1, false);
+    const body = new THREE.Mesh(bodyGeo, shirtMat);
+    body.position.set(0, -0.78, 0);
+    body.scale.set(1.35, 1, 0.72);
+    avatarGroup.add(body);
+    addOutline(body, BLACK, 1.01);
+
+    // 领子
+    const collarGeo = new THREE.CylinderGeometry(0.46, 0.5, 0.2, 24, 1, true);
+    const collar = new THREE.Mesh(collarGeo, shirtMat);
+    collar.position.set(0, 0.03, 0);
+    collar.scale.set(1, 1, 0.76);
+    avatarGroup.add(collar);
+
+    // 领尖
+    const lapelGeo = new THREE.BoxGeometry(0.3, 0.025, 0.32);
+    const lapelL = new THREE.Mesh(lapelGeo, shirtMat);
+    lapelL.position.set(-0.2, -0.02, 0.4);
+    lapelL.rotation.set(0.32, 0, 0.38);
+    avatarGroup.add(lapelL);
+    addOutline(lapelL, BLACK, 1.005);
+    const lapelR = new THREE.Mesh(lapelGeo, shirtMat);
+    lapelR.position.set(0.2, -0.02, 0.4);
+    lapelR.rotation.set(0.32, 0, -0.38);
+    avatarGroup.add(lapelR);
+    addOutline(lapelR, BLACK, 1.005);
+
+    // 白色T恤领口
+    const teeGeo = new THREE.CircleGeometry(0.23, 28);
+    const teeMat = cartoonMat(WHITE, { roughness: 0.7 });
+    const tee = new THREE.Mesh(teeGeo, teeMat);
+    tee.position.set(0, -0.12, 0.54);
+    tee.rotation.x = -0.22;
+    avatarGroup.add(tee);
+
+    // 纽扣 (大黑圆扣)
+    const btnMat = cartoonMat(BLACK, { roughness: 0.45, metalness: 0.1 });
+    const btnGeo = new THREE.CylinderGeometry(0.038, 0.038, 0.018, 16);
+    [-0.26, -0.6, -0.95].forEach(y => {
+      const btn = new THREE.Mesh(btnGeo, btnMat);
+      btn.rotation.x = Math.PI / 2;
+      btn.position.set(0, y, 0.7);
+      avatarGroup.add(btn);
+      addOutline(btn, BLACK, 1.05);
+    });
+
+    // 胸口袋
+    const pocketGeo = new THREE.BoxGeometry(0.42, 0.38, 0.025);
+    const pocket = new THREE.Mesh(pocketGeo, shirtMat);
+    pocket.position.set(0.47, -0.62, 0.7);
+    avatarGroup.add(pocket);
+    addOutline(pocket, BLACK, 1.008);
+
+    // ========== 入场动画 ==========
+    gsap.from(avatarGroup.position, {
+      y: -3.2,
+      duration: 1.6,
+      ease: "bounce.out"
+    });
+    gsap.from(avatarGroup.rotation, {
+      y: 0.55,
+      duration: 2.0,
+      ease: "power3.out"
+    });
+
+    // ========== 鼠标追踪 (瞳孔跟随核心) ==========
+    const mouseNDC = new THREE.Vector2(0, 0);
+    window.addEventListener('mousemove', (e) => {
+      mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseNDC.y = -((e.clientY / window.innerHeight) * 2 - 1);
+    });
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches[0]) {
+        mouseNDC.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+        mouseNDC.y = -((e.touches[0].clientY / window.innerHeight) * 2 - 1);
+      }
+    });
+
+    // ========== 渲染循环 ==========
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+
+      const maxOffset = 0.068;
+      const targetX = THREE.MathUtils.clamp(mouseNDC.x * maxOffset, -maxOffset, maxOffset);
+      const targetY = THREE.MathUtils.clamp(mouseNDC.y * maxOffset, -maxOffset, maxOffset);
+
+      const isPC = window.innerWidth >= 768;
+      const factor = isPC ? 1.0 : 0.4;
+
+      // 虹膜(含瞳孔)随鼠标偏移，眼白保持不动
+      [irisLeft, irisRight].forEach(iris => {
+        iris.position.x += (targetX * factor - iris.position.x) * 0.12;
+        iris.position.y += (targetY * factor - iris.position.y) * 0.12;
+      });
+
+      // 头部整体随鼠标轻微偏转 (轻微视差)
+      avatarGroup.rotation.y += (mouseNDC.x * 0.14 - avatarGroup.rotation.y) * 0.05;
+      avatarGroup.rotation.x += (-mouseNDC.y * 0.07 - avatarGroup.rotation.x) * 0.05;
+
+      // 呼吸浮动
+      avatarGroup.position.y = 0.0 + Math.sin(t * 1.3) * 0.02;
+      avatarGroup.rotation.z = Math.sin(t * 0.9) * 0.012;
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ========== 响应式 ==========
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      const isMobile = window.innerWidth < 768;
+      const s = isMobile ? 0.72 : 1;
+      avatarGroup.scale.set(s, s, s);
+    });
+    window.dispatchEvent(new Event('resize'));
+  </script>
+</body>
+</html>
